@@ -19,7 +19,7 @@ With improvements by http://www.variations-of-shadow.com
  A random() function is available to generate secure random bytes with 5 methods :
 * [mcrypt_create_iv](http://php.net/manual/en/function.mcrypt-create-iv.php)
 * [openssl_random_pseudo_bytes](http://php.net/manual/en/function.openssl-random-pseudo-bytes.php)
-* [GetRandom](http://msdn.microsoft.com/en-us/library/aa388176(VS.85).aspx) function from CAPICOM Microsoft class
+* [GetRandom](http://msdn.microsoft.com/en-us/library/aa388176%28VS.85%29.aspx) function from CAPICOM Microsoft class
 * [/dev/urandom](http://en.wikipedia.org/wiki//dev/random) on Unix systems
 * Mix of [microtime](http://php.net/manual/en/function.microtime.php) and [getmypid](http://php.net/manual/en/function.getmypid.php) functions
 
