@@ -33,7 +33,7 @@ There is also a method to encrypt/decrypt data using a symectric encryption stri
 * Copy the ``class.cws.crypto.php`` file in a folder on your server.
 * You can use the ``index.php`` file sample to help you.
 
-## Gettings started
+## Getting started
 
 ```php
 <?php
