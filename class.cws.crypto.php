@@ -30,7 +30,7 @@
  * @author Cr@zy
  * @copyright 2013, Cr@zy
  * @license GNU LESSER GENERAL PUBLIC LICENSE
- * @version 1.0
+ * @version 1.1
  * @link https://github.com/crazy-max/CwsCrypto
  *
  */
@@ -73,7 +73,20 @@ class CwsCrypto
      * CwsCrypto version.
      * @var string
      */
-    private $version = "1.0";
+    private $version = "1.1";
+    
+    /**
+     * Default mode for hashing/check password
+     * CWSCRYPTO_MODE_BCRYPT or CWSCRYPTO_MODE_PBKDF2.
+     * @var int
+     */
+    private $defaultMode;
+    
+    /**
+     * Default key for encrypt/decrypt method
+     * @var string
+     */
+    private $defaultKey;
     
     /**
      * Control the debug output.
@@ -100,10 +113,10 @@ class CwsCrypto
      * Output additional msg for debug.
      * @param string $msg : if not given, output the last error msg.
      * @param int $verbose_level : the output level of this message.
-     * @param boolean $newline : insert new line or not.
-     * @param boolean $code : is code or not.
+     * @param bool $newline : insert new line or not.
+     * @param bool $code : is code or not.
      */
-    private function output($msg=false, $verbose_level=CWSCRYPTO_VERBOSE_SIMPLE, $newline=true, $code=false)
+    private function output($msg=null, $verbose_level=CWSCRYPTO_VERBOSE_SIMPLE, $newline=true, $code=false)
     {
         if ($this->debugVerbose >= $verbose_level) {
             if (empty($msg)) {
@@ -129,13 +142,20 @@ class CwsCrypto
      * @param int $hashMode : The password hash mode (CWSCRYPTO_MODE_BCRYPT or CWSCRYPTO_MODE_PBKDF2)
      * @return string|NULL
      */
-    public function hashPassword($password, $hashMode=CWSCRYPTO_MODE_BCRYPT)
+    public function hashPassword($password, $hashMode=null)
     {
+        if (empty($hashMode) && !empty($this->defaultMode)) {
+            $hashMode = $this->defaultMode;
+        }
+        
         if ($hashMode == CWSCRYPTO_MODE_BCRYPT) {
             return $this->hashModeBcrypt($password);
         } elseif ($hashMode == CWSCRYPTO_MODE_PBKDF2) {
             return $this->hashModePbkdf2($password);
         }
+        
+        $this->errorMsg = "Encrypt mode unknown...";
+        $this->output();
         return null;
     }
 
@@ -217,13 +237,20 @@ class CwsCrypto
      * @param int $hashMode : The password hash mode (CWSCRYPTO_MODE_BCRYPT or CWSCRYPTO_MODE_PBKDF2)
      * @return boolean
      */
-    public function checkPassword($password, $hash, $hashMode=CWSCRYPTO_MODE_BCRYPT)
+    public function checkPassword($password, $hash, $hashMode=null)
     {
+        if (empty($hashMode) && !empty($this->defaultMode)) {
+            $hashMode = $this->defaultMode;
+        }
+        
         if ($hashMode == CWSCRYPTO_MODE_BCRYPT) {
             return $this->checkModeBcrypt($password, $hash);
         } elseif ($hashMode == CWSCRYPTO_MODE_PBKDF2) {
             return $this->checkModePbkdf2($password, $hash);
         }
+        
+        $this->errorMsg = "Encrypt mode unknown...";
+        $this->output();
         return false;
     }
 
@@ -289,9 +316,13 @@ class CwsCrypto
      * @param string $key : The encryption key (max length 56)
      * @return string|NULL : The encrypted string
      */
-    public function encrypt($data, $key)
+    public function encrypt($data, $key=null)
     {
         $this->output('<h2>Encrypt data</h2>', CWSCRYPTO_VERBOSE_SIMPLE, false);
+        
+        if (empty($key) && !empty($this->defaultKey)) {
+            $key = $this->defaultKey;
+        }
         
         if (empty($data) || empty($key)) {
             $this->errorMsg = "Data or encryption key empty...";
@@ -323,13 +354,17 @@ class CwsCrypto
     
     /**
      * Return the decrypted string generated from the encrypt method.
-     * @param string $enc : The encrypted string
+     * @param string $data : The encrypted string
      * @param string $key : The encryption key (max length 56)
-     * @return string|NULL : The decrypted string
+     * @return null|string : The decrypted string
      */
-    public function decrypt($data, $key)
+    public function decrypt($data, $key=null)
     {
         $this->output('<h2>Decrypt data</h2>', CWSCRYPTO_VERBOSE_SIMPLE, false);
+        
+        if (empty($key) && !empty($this->defaultKey)) {
+            $key = $this->defaultKey;
+        }
         
         if (empty($data) || empty($key)) {
             $this->errorMsg = "Data or encryption key empty...";
@@ -372,7 +407,7 @@ class CwsCrypto
     public static function random($length=32, $base64=true)
     {
         // Try with mcrypt_create_iv function
-        if (function_exists('mcrypt_create_iv') && CwsCrypto::isPHPVersionHigher('5.3.7')) {
+        if (function_exists('mcrypt_create_iv') && self::isPHPVersionHigher('5.3.7')) {
             $bytes = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
             if ($bytes !== false && strlen($bytes) === $length) {
                 return $base64 ? base64_encode($bytes) : $bytes;
@@ -380,7 +415,7 @@ class CwsCrypto
         }
     
         // Try with openssl_random_pseudo_bytes function
-        if (function_exists('openssl_random_pseudo_bytes') && CwsCrypto::isPHPVersionHigher('5.3.4')) {
+        if (function_exists('openssl_random_pseudo_bytes') && self::isPHPVersionHigher('5.3.4')) {
             $bytes = openssl_random_pseudo_bytes($length, $usable);
             if ($usable === true) {
                 return $base64 ? base64_encode($bytes) : $bytes;
@@ -388,7 +423,7 @@ class CwsCrypto
         }
     
         // Try with CAPICOM Microsoft class
-        if (CwsCrypto::isOnWindows() && class_exists('\\COM', false)) {
+        if (self::isOnWindows() && class_exists('\\COM', false)) {
             try {
                 $capi = new COM('CAPICOM.Utilities.1');
                 $bytes = $capi->GetRandom($length, 0);
@@ -400,7 +435,7 @@ class CwsCrypto
         }
     
         // Try with /dev/urandom
-        if (!CwsCrypto::isOnWindows() && file_exists('/dev/urandom') && is_readable('/dev/urandom')) {
+        if (!self::isOnWindows() && file_exists('/dev/urandom') && is_readable('/dev/urandom')) {
             $fp = @fopen('/dev/urandom', 'rb');
             if ($fp !== false) {
                 $bytes = @fread($fp, $length);
@@ -487,14 +522,14 @@ class CwsCrypto
      */
     private static function getPbkdf2($algorithm, $password, $salt, $ite, $key_length, $raw_output=false)
     {
-        $algorithm = strtolower(CwsCrypto::decode($algorithm));
+        $algorithm = strtolower(self::decode($algorithm));
         if (!in_array($algorithm, hash_algos(), true)) {
             $this->errorMsg = "Invalid hash algorithm for PBKDF2...";
             $this->output();
             return null;
         }
         
-        $ite = CwsCrypto::decode($ite);
+        $ite = self::decode($ite);
         if (!is_numeric($ite) || $ite <= 0 || $key_length <= 0) {
             $this->errorMsg = "Invalid parameters for PBKDF2...";
             $this->output();
@@ -547,7 +582,7 @@ class CwsCrypto
      */
     private static function encode($data)
     {
-        $rdm = CwsCrypto::random();
+        $rdm = self::random();
         $data = base64_encode($data);
         $startIndex = rand(1, strlen($rdm));
         $params = base64_encode($startIndex) . CWSCRYPTO_ENC_SEPARATOR;
@@ -624,7 +659,25 @@ class CwsCrypto
     {
         return $this->version;
     }
-    
+
+    /**
+     * Set the default mode for hashing/check password.
+     * @param number $defaultMode
+     */
+    public function setDefaultMode ($defaultMode)
+    {
+        $this->defaultMode = $defaultMode;
+    }
+
+    /**
+     * Set the default key for encrypt/decrypt method.
+     * @param string $defaultKey
+     */
+    public function setDefaultKey ($defaultKey)
+    {
+        $this->defaultKey = $defaultKey;
+    }
+
     /**
      * Get the debug verbose.
      * @return the $debugVerbose
