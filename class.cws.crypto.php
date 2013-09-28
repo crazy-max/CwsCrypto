@@ -30,7 +30,7 @@
  * @author Cr@zy
  * @copyright 2013, Cr@zy
  * @license GNU LESSER GENERAL PUBLIC LICENSE
- * @version 1.1
+ * @version 1.2
  * @link https://github.com/crazy-max/CwsCrypto
  *
  */
@@ -73,7 +73,7 @@ class CwsCrypto
      * CwsCrypto version.
      * @var string
      */
-    private $version = "1.1";
+    private $version = "1.2";
     
     /**
      * Default mode for hashing/check password
@@ -399,7 +399,7 @@ class CwsCrypto
     /**
      * Generate secure random bytes with 5 methods : mcrypt_create_iv,
      * openssl_random_pseudo_bytes, GetRandom() from CAPICOM Microsoft class,
-     * /dev/urandom on Unix systems or microtime() and getmypid() functions.
+     * /dev/urandom on Unix systems or mt_rand() and getmypid() functions.
      * @param int $length : The length of random bytes
      * @param boolean $base64 : Encodes random bytes with MIME base64
      * @return string|NULL : The random bytes
@@ -446,15 +446,15 @@ class CwsCrypto
             }
         }
 
-        // Otherwise use microtime() and getmypid() functions
+        // Otherwise use mt_rand() and getmypid() functions
         if (strlen($bytes) < $length) {
             $bytes = '';
-            $state = microtime();
+            $state = mt_rand();
             if (function_exists('getmypid')) {
                 $state .= getmypid();
             }
             for ($i = 0; $i < $length; $i += 16) {
-                $state = md5(microtime() . $state);
+                $state = md5(mt_rand() . $state);
                 $bytes .= pack('H*', md5($state));
             }
             return substr($bytes, 0, $length);

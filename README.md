@@ -101,7 +101,7 @@ An example is available in ``index.php`` file :
 **checkPassword** - Check a hash with the password given.<br />
 **encrypt** - Generate a symectric encryption string with the blowfish algorithm and an encryption key in CFB mode.<br />
 **decrypt** - Return the decrypted string generated from the encrypt method.<br />
-**random** - Generate secure random bytes with 5 methods : mcrypt_create_iv, openssl_random_pseudo_bytes, GetRandom() from CAPICOM Microsoft class, /dev/urandom on Unix systems or microtime() and getmypid() functions.<br />
+**random** - Generate secure random bytes with 5 methods : mcrypt_create_iv, openssl_random_pseudo_bytes, GetRandom() from CAPICOM Microsoft class, /dev/urandom on Unix systems or mt_rand() and getmypid() functions.<br />
 
 **getVersion** - Get the CwsCrypto version.<br />
 **setDefaultMode** - Set the default mode for hashing/check password.<br />
