@@ -30,6 +30,7 @@ There is also a method to encrypt/decrypt data using a symectric encryption stri
 ## Requirements and installation
 
 * PHP version >= 5.3.x
+* Download and copy the [CwsDump](https://github.com/crazy-max/CwsDump) and [CwsDebug](https://github.com/crazy-max/CwsDebug) PHP classes.
 * Copy the ``class.cws.crypto.php`` file in a folder on your server.
 * You can use the ``index.php`` file sample to help you.
 
@@ -38,10 +39,17 @@ There is also a method to encrypt/decrypt data using a symectric encryption stri
 ```php
 <?php
 
-require 'class.cws.crypto.php';
+// Download CwsDump at https://github.com/crazy-max/CwsDump
+require_once '../CwsDump/class.cws.dump.php';
+
+// Download CwsDebug at https://github.com/crazy-max/CwsDebug
+require_once '../CwsDebug/class.cws.debug.php';
+
+require_once 'class.cws.crypto.php';
 
 $cwsCrypto = new CwsCrypto();
-$cwsCrypto->setDebugVerbose(CWSCRYPTO_VERBOSE_DEBUG);  // default CWSCRYPTO_VERBOSE_QUIET
+$cwsCrypto->setDebugVerbose(CWSDEBUG_VERBOSE_DEBUG); // CWSDEBUG_VERBOSE_QUIET, CWSDEBUG_VERBOSE_SIMPLE, CWSDEBUG_VERBOSE_REPORT or CWSDEBUG_VERBOSE_DEBUG
+$cwsCrypto->setDebugMode(CWSDEBUG_MODE_ECHO);        // CWSDEBUG_MODE_ECHO or CWSDEBUG_MODE_FILE
 
 /**
  * Create and check password hash
@@ -103,12 +111,11 @@ An example is available in ``index.php`` file :
 **decrypt** - Return the decrypted string generated from the encrypt method.<br />
 **random** - Generate secure random bytes with 5 methods : mcrypt_create_iv, openssl_random_pseudo_bytes, GetRandom() from CAPICOM Microsoft class, /dev/urandom on Unix systems or mt_rand() and getmypid() functions.<br />
 
-**getVersion** - Get the CwsCrypto version.<br />
+**setDebugVerbose** - Set the debug verbose. (see CwsDebug class)<br />
+**setDebugMode** - Set the debug mode. (see CwsDebug class)<br />
 **setDefaultMode** - Set the default mode for hashing/check password.<br />
 **setDefaultKey** - Set the default key for encrypt/decrypt method.<br />
-**getDebugVerbose** - Get the current debug verbose mode.<br />
-**setDebugVerbose** - Control the debug output.<br />
-**getErrorMsg** - Get the last error message.<br />
+**getError** - Get the last error.<br />
 
 ## License
 

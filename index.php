@@ -1,9 +1,16 @@
 <?php
 
-require 'class.cws.crypto.php';
+// Download CwsDump at https://github.com/crazy-max/CwsDump
+require_once '../CwsDump/class.cws.dump.php';
+
+// Download CwsDebug at https://github.com/crazy-max/CwsDebug
+require_once '../CwsDebug/class.cws.debug.php';
+
+require_once 'class.cws.crypto.php';
 
 $cwsCrypto = new CwsCrypto();
-$cwsCrypto->setDebugVerbose(CWSCRYPTO_VERBOSE_DEBUG);  // default CWSCRYPTO_VERBOSE_QUIET
+$cwsCrypto->setDebugVerbose(CWSDEBUG_VERBOSE_DEBUG); // CWSDEBUG_VERBOSE_QUIET, CWSDEBUG_VERBOSE_SIMPLE, CWSDEBUG_VERBOSE_REPORT or CWSDEBUG_VERBOSE_DEBUG
+$cwsCrypto->setDebugMode(CWSDEBUG_MODE_ECHO);        // CWSDEBUG_MODE_ECHO or CWSDEBUG_MODE_FILE
 
 /**
  * Create and check password hash
