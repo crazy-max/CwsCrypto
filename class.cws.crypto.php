@@ -690,6 +690,14 @@ class CwsCrypto
     {
         $this->defaultKey = $defaultKey;
     }
+    
+    /**
+     * The last error.
+     * @return the $error
+     */
+    public function getError() {
+    	return $this->error;
+    }
 }
 
 ?>
