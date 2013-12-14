@@ -30,10 +30,12 @@
  * @author Cr@zy
  * @copyright 2013, Cr@zy
  * @license GNU LESSER GENERAL PUBLIC LICENSE
- * @version 1.3
+ * @version 1.4
  * @link https://github.com/crazy-max/CwsCrypto
  *
  */
+
+define('CWSCRYPTO_CAPICOM_CLASS',          'COM');
 
 define('CWSCRYPTO_MODE_PBKDF2',            0);
 define('CWSCRYPTO_MODE_BCRYPT',            1);
@@ -64,33 +66,33 @@ define('CWSCRYPTO_ENC_DATA_INDEX',         2);
 
 class CwsCrypto
 {
-	/**
-	 * Control the debug output. (see CwsDebug class)
-	 * @var int
-	 */
-	private $debugVerbose = false;
-	
-	/**
-	 * The debug output mode. (see CwsDebug class)
-	 * default CWSDEBUG_MODE_ECHO
-	 * @var int
-	 */
-	private $debugMode = CWSDEBUG_MODE_ECHO;
-	
-	/**
-	 * The debug file path in CWSDEBUG_MODE_FILE mode. (see CwsDebug class)
-	 * default './cwscrypto-debug.html'
-	 * @var string
-	 */
-	private $debugFilePath = './cwscrypto-debug.html';
-	
-	/**
-	 * Clear the file at the beginning. (see CwsDebug class)
-	 * default true
-	 * @var boolean
-	 */
-	private $debugFileClear = false;
-	
+    /**
+     * Control the debug output. (see CwsDebug class)
+     * @var int
+     */
+    private $debugVerbose = false;
+    
+    /**
+     * The debug output mode. (see CwsDebug class)
+     * default CWSDEBUG_MODE_ECHO
+     * @var int
+     */
+    private $debugMode = CWSDEBUG_MODE_ECHO;
+    
+    /**
+     * The debug file path in CWSDEBUG_MODE_FILE mode. (see CwsDebug class)
+     * default './cwscrypto-debug.html'
+     * @var string
+     */
+    private $debugFilePath = './cwscrypto-debug.html';
+    
+    /**
+     * Clear the file at the beginning. (see CwsDebug class)
+     * default true
+     * @var boolean
+     */
+    private $debugFileClear = false;
+    
     /**
      * Default mode for hashing/check password
      * CWSCRYPTO_MODE_BCRYPT or CWSCRYPTO_MODE_PBKDF2.
@@ -111,16 +113,14 @@ class CwsCrypto
     private $error;
     
     public function __construct() {
-    	if (!class_exists('CwsDebug')) {
-    		$this->error = 'CwsDebug is required - https://github.com/crazy-max/CwsDebug';
-    		echo $this->error;
-    		return;
-    	}
-    	
-    	global $cwsDebug;
-    	$cwsDebug = new CwsDebug();
-    	$cwsDebug->setVerbose($this->debugVerbose);
-    	$cwsDebug->setMode($this->debugMode, $this->debugFilePath, $this->debugFileClear);
+        if (!class_exists('CwsDebug')) {
+            $this->error = 'CwsDebug is required - https://github.com/crazy-max/CwsDebug';
+            echo $this->error;
+            return;
+        }
+        
+        global $cwsDebugCrypto;
+        $cwsDebugCrypto = new CwsDebug();
     }
     
     /**
@@ -131,8 +131,8 @@ class CwsCrypto
      */
     public function hashPassword($password, $hashMode=null)
     {
-    	global $cwsDebug;
-    	
+        global $cwsDebugCrypto;
+        
         if (empty($hashMode) && !empty($this->defaultMode)) {
             $hashMode = $this->defaultMode;
         }
@@ -144,7 +144,7 @@ class CwsCrypto
         }
         
         $this->error = 'Encrypt mode unknown...';
-        $cwsDebug->error($this->error);
+        $cwsDebugCrypto->error($this->error);
         return null;
     }
 
@@ -155,27 +155,27 @@ class CwsCrypto
      */
     private function hashModeBcrypt($password)
     {
-    	global $cwsDebug;
-    	
-    	$cwsDebug->titleH2('Create password hash using BCRYPT');
-    	$cwsDebug->labelValue('Password', $password);
+        global $cwsDebugCrypto;
+        
+        $cwsDebugCrypto->titleH2('Create password hash using BCRYPT');
+        $cwsDebugCrypto->labelValue('Password', $password);
 
         $ite = rand(CWSCRYPTO_BCRYPT_MIN_ITE, CWSCRYPTO_BCRYPT_MAX_ITE);
-        $cwsDebug->labelValue('Iterations', $ite);
+        $cwsDebugCrypto->labelValue('Iterations', $ite);
 
         $salt = $this->getBlowfishSalt($ite);
-        $cwsDebug->labelValue('Salt', $salt);
+        $cwsDebugCrypto->labelValue('Salt', $salt);
 
         $hash = crypt($password, $salt);
-        $cwsDebug->labelValue('Hash', $hash);
-        $cwsDebug->labelValue('Length', strlen($hash));
+        $cwsDebugCrypto->labelValue('Hash', $hash);
+        $cwsDebugCrypto->labelValue('Length', strlen($hash));
 
         if (CRYPT_BLOWFISH == 1 && strlen($hash) == CWSCRYPTO_BCRYPT_LENGTH) {
             return $hash;
         }
 
         $this->error = 'Cannot generate the BCRYPT password hash...';
-        $cwsDebug->error($this->error);
+        $cwsDebugCrypto->error($this->error);
         return null;
     }
 
@@ -186,19 +186,19 @@ class CwsCrypto
      */
     private function hashModePbkdf2($password)
     {
-        global $cwsDebug;
-    	
-    	$cwsDebug->titleH2('Create password hash using PBKDF2');
-    	$cwsDebug->labelValue('Password', $password);
+        global $cwsDebugCrypto;
+        
+        $cwsDebugCrypto->titleH2('Create password hash using PBKDF2');
+        $cwsDebugCrypto->labelValue('Password', $password);
 
         $salt = $this->random(CWSCRYPTO_PBKDF2_RANDOM_BYTES);
-        $cwsDebug->labelValue('Salt', $salt);
+        $cwsDebugCrypto->labelValue('Salt', $salt);
 
         $algorithm = $this->encode(CWSCRYPTO_PBKDF2_ALGORITHM);
-        $cwsDebug->labelValue('Algorithm', CWSCRYPTO_PBKDF2_ALGORITHM);
+        $cwsDebugCrypto->labelValue('Algorithm', CWSCRYPTO_PBKDF2_ALGORITHM);
 
         $ite = rand(CWSCRYPTO_PBKDF2_MIN_ITE, CWSCRYPTO_PBKDF2_MAX_ITE);
-        $cwsDebug->labelValue('Iterations', $ite);
+        $cwsDebugCrypto->labelValue('Iterations', $ite);
         $ite = $this->encode(rand(CWSCRYPTO_PBKDF2_MIN_ITE, CWSCRYPTO_PBKDF2_MAX_ITE));
         
         $params = $algorithm . CWSCRYPTO_PBKDF2_SEPARATOR;
@@ -206,18 +206,18 @@ class CwsCrypto
         $params .= $salt . CWSCRYPTO_PBKDF2_SEPARATOR;
         
         $hash = $this->getPbkdf2($algorithm, $password, $salt, $ite, CWSCRYPTO_PBKDF2_HASH_BYTES, true);
-        $cwsDebug->labelValue('Hash', $hash);
-        $cwsDebug->labelValue('Length', strlen($hash));
+        $cwsDebugCrypto->labelValue('Hash', $hash);
+        $cwsDebugCrypto->labelValue('Length', strlen($hash));
 
         $finalHash = $params . base64_encode($hash);
-        $cwsDebug->dump('Encoded hash (length : ' . strlen($finalHash) . ')', $finalHash);
+        $cwsDebugCrypto->dump('Encoded hash (length : ' . strlen($finalHash) . ')', $finalHash);
 
         if (strlen($finalHash) == CWSCRYPTO_PBKDF2_LENGTH) {
             return $finalHash;
         }
 
         $this->error = 'Cannot generate the PBKDF2 password hash...';
-        $cwsDebug->error($this->error);
+        $cwsDebugCrypto->error($this->error);
         return null;
     }
     
@@ -230,8 +230,8 @@ class CwsCrypto
      */
     public function checkPassword($password, $hash, $hashMode=null)
     {
-    	global $cwsDebug;
-    	
+        global $cwsDebugCrypto;
+        
         if (empty($hashMode) && !empty($this->defaultMode)) {
             $hashMode = $this->defaultMode;
         }
@@ -243,7 +243,7 @@ class CwsCrypto
         }
         
         $this->error = 'Encrypt mode unknown...';
-        $cwsDebug->error($this->error);
+        $cwsDebugCrypto->error($this->error);
         return false;
     }
 
@@ -255,17 +255,17 @@ class CwsCrypto
      */
     private function checkModeBcrypt($password, $hash)
     {
-    	global $cwsDebug;
-    	 
-    	$cwsDebug->titleH2('Check password hash in BCRYPT mode');
-    	$cwsDebug->labelValue('Password', $password);
-    	$cwsDebug->labelValue('Hash', $hash);
+        global $cwsDebugCrypto;
+         
+        $cwsDebugCrypto->titleH2('Check password hash in BCRYPT mode');
+        $cwsDebugCrypto->labelValue('Password', $password);
+        $cwsDebugCrypto->labelValue('Hash', $hash);
 
         $checkHash = crypt($password, $hash);
-        $cwsDebug->labelValue('Check hash', $checkHash);
+        $cwsDebugCrypto->labelValue('Check hash', $checkHash);
 
         $result = $this->slowEquals($hash, $checkHash);
-        $cwsDebug->labelValue('Valid?', ($result ? 'YES!' : 'NO...'));
+        $cwsDebugCrypto->labelValue('Valid?', ($result ? 'YES!' : 'NO...'));
 
         return $result;
     }
@@ -278,11 +278,11 @@ class CwsCrypto
      */
     private function checkModePbkdf2($password, $hash)
     {
-    	global $cwsDebug;
-    	
-    	$cwsDebug->titleH2('Check password hash in PBKDF2 mode');
-    	$cwsDebug->labelValue('Password', $password);
-    	$cwsDebug->dump('Hash', $hash);
+        global $cwsDebugCrypto;
+        
+        $cwsDebugCrypto->titleH2('Check password hash in PBKDF2 mode');
+        $cwsDebugCrypto->labelValue('Password', $password);
+        $cwsDebugCrypto->dump('Hash', $hash);
 
         $params = explode(CWSCRYPTO_PBKDF2_SEPARATOR, $hash);
         if (count($params) < CWSCRYPTO_PBKDF2_SECTIONS) {
@@ -293,13 +293,13 @@ class CwsCrypto
         $salt = $params[CWSCRYPTO_PBKDF2_SALT_INDEX];
         $ite = $params[CWSCRYPTO_PBKDF2_ITE_INDEX];
         $hash = base64_decode($params[CWSCRYPTO_PBKDF2_HASH_INDEX]);
-        $cwsDebug->labelValue('Decoded hash', $hash);
+        $cwsDebugCrypto->labelValue('Decoded hash', $hash);
                 
         $checkHash = $this->getPbkdf2($algorithm, $password, $salt, $ite, strlen($hash), true);
-        $cwsDebug->labelValue('Check hash', $checkHash);
+        $cwsDebugCrypto->labelValue('Check hash', $checkHash);
 
         $result = $this->slowEquals($hash, $checkHash);
-        $cwsDebug->labelValue('Valid?', ($result ? 'YES!' : 'NO...'));
+        $cwsDebugCrypto->labelValue('Valid?', ($result ? 'YES!' : 'NO...'));
 
         return $result;
     }
@@ -314,8 +314,8 @@ class CwsCrypto
      */
     public function encrypt($data, $key=null)
     {
-    	global $cwsDebug;
-    	$cwsDebug->titleH2('Encrypt data');
+        global $cwsDebugCrypto;
+        $cwsDebugCrypto->titleH2('Encrypt data');
         
         if (empty($key) && !empty($this->defaultKey)) {
             $key = $this->defaultKey;
@@ -323,12 +323,12 @@ class CwsCrypto
         
         if (empty($data) || empty($key)) {
             $this->error = 'Data or encryption key empty...';
-            $cwsDebug->error($this->error);
+            $cwsDebugCrypto->error($this->error);
             return null;
         }
 
-        $cwsDebug->labelValue('Encryption key', $key);
-        $cwsDebug->dump('Data', $data);
+        $cwsDebugCrypto->labelValue('Encryption key', $key);
+        $cwsDebugCrypto->dump('Data', $data);
 
         $td = mcrypt_module_open(MCRYPT_BLOWFISH, '', MCRYPT_MODE_CFB, '');
         
@@ -342,7 +342,7 @@ class CwsCrypto
         mcrypt_generic_deinit($td);
 
         $result = $iv . $encryptedData;
-        $cwsDebug->dump('Encrypted data', $result);
+        $cwsDebugCrypto->dump('Encrypted data', $result);
         
         return $result;
     }
@@ -355,8 +355,8 @@ class CwsCrypto
      */
     public function decrypt($data, $key=null)
     {
-    	global $cwsDebug;
-    	$cwsDebug->titleH2('Decrypt data');
+        global $cwsDebugCrypto;
+        $cwsDebugCrypto->titleH2('Decrypt data');
         
         if (empty($key) && !empty($this->defaultKey)) {
             $key = $this->defaultKey;
@@ -364,12 +364,12 @@ class CwsCrypto
         
         if (empty($data) || empty($key)) {
             $this->error = 'Data or encryption key empty...';
-            $cwsDebug->error($this->error);
+            $cwsDebugCrypto->error($this->error);
             return null;
         }
 
-        $cwsDebug->labelValue('Encryption key', $key);
-        $cwsDebug->dump('Encrypted data', $data);
+        $cwsDebugCrypto->labelValue('Encryption key', $key);
+        $cwsDebugCrypto->dump('Encrypted data', $data);
 
         $result = null;
         $td = mcrypt_module_open(MCRYPT_BLOWFISH, '', MCRYPT_MODE_CFB, '');
@@ -385,7 +385,7 @@ class CwsCrypto
             $result = $this->decode($decryptData);
         }
 
-        $cwsDebug->dump('Data', $result);
+        $cwsDebugCrypto->dump('Data', $result);
         
         return $result;
     }
@@ -400,8 +400,8 @@ class CwsCrypto
      */
     public static function random($length=32, $base64=true)
     {
-    	global $cwsDebug;
-    	
+        global $cwsDebugCrypto;
+        
         // Try with mcrypt_create_iv function
         if (function_exists('mcrypt_create_iv') && self::isPHPVersionHigher('5.3.7')) {
             $bytes = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
@@ -421,7 +421,8 @@ class CwsCrypto
         // Try with CAPICOM Microsoft class
         if (self::isOnWindows() && class_exists('\\COM', false)) {
             try {
-                $capi = new COM('CAPICOM.Utilities.1');
+                $capicomClass = CWSCRYPTO_CAPICOM_CLASS;
+                $capi = new $capicomClass('CAPICOM.Utilities.1');
                 $bytes = $capi->GetRandom($length, 0);
                 if ($bytes !== false && strlen($bytes) === $length) {
                     return $base64 ? base64_encode($bytes) : $bytes;
@@ -457,7 +458,7 @@ class CwsCrypto
         }
 
         $this->error = 'Unable to generate sufficiently strong random bytes due to a lack of sources with sufficient entropy...';
-        $cwsDebug->error($this->error);
+        $cwsDebugCrypto->error($this->error);
         return null;
     }
 
@@ -518,19 +519,19 @@ class CwsCrypto
      */
     private static function getPbkdf2($algorithm, $password, $salt, $ite, $key_length, $raw_output=false)
     {
-    	global $cwsDebug;
-    	
+        global $cwsDebugCrypto;
+        
         $algorithm = strtolower(self::decode($algorithm));
         if (!in_array($algorithm, hash_algos(), true)) {
             $this->error = 'Invalid hash algorithm for PBKDF2...';
-            $cwsDebug->error($this->error);
+            $cwsDebugCrypto->error($this->error);
             return null;
         }
         
         $ite = self::decode($ite);
         if (!is_numeric($ite) || $ite <= 0 || $key_length <= 0) {
             $this->error = 'Invalid parameters for PBKDF2...';
-            $cwsDebug->error($this->error);
+            $cwsDebugCrypto->error($this->error);
             return null;
         }
         
@@ -655,7 +656,9 @@ class CwsCrypto
      */
     public function setDebugVerbose($debugVerbose)
     {
-    	$this->debugVerbose = $debugVerbose;
+      global $cwsDebugCrypto;
+        $this->debugVerbose = $debugVerbose;
+        $cwsDebugCrypto->setVerbose($this->debugVerbose);
     }
     
     /**
@@ -666,11 +669,13 @@ class CwsCrypto
      */
     public function setDebugMode($debugMode, $debugFilePath=null, $debugFileClear=false)
     {
-    	$this->debugMode = $debugMode;
-    	if ($debugFilePath != null) {
-    		$this->debugFilePath = $debugFilePath;
-    		$this->debugFileClear = $debugFileClear;
-    	}
+      global $cwsDebugCrypto;
+        $this->debugMode = $debugMode;
+        if ($debugFilePath != null) {
+            $this->debugFilePath = $debugFilePath;
+            $this->debugFileClear = $debugFileClear;
+        }
+        $cwsDebugCrypto->setMode($this->debugMode, $this->debugFilePath, $this->debugFileClear);
     }
     
     /**
@@ -696,8 +701,6 @@ class CwsCrypto
      * @return the $error
      */
     public function getError() {
-    	return $this->error;
+        return $this->error;
     }
 }
-
-?>
