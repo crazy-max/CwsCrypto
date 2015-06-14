@@ -4,16 +4,16 @@ CwsCrypto is a PHP class for password hashing with two different encryption meth
 
 ### The PBKDF2 key derivation function
 
-Defined by RSA's PKCS #5: https://www.ietf.org/rfc/rfc2898.txt
-This implementation of PBKDF2 was originally created by https://defuse.ca/php-pbkdf2.htm
+Defined by RSA's PKCS #5: https://www.ietf.org/rfc/rfc2898.txt<br />
+This implementation of PBKDF2 was originally created by https://defuse.ca/php-pbkdf2.htm<br />
 With improvements by http://www.variations-of-shadow.com
 
 ### The OpenBSD-style Blowfish-based bcrypt
 
- This hashing method is known in PHP as CRYPT_BLOWFISH.
- More infos : http://www.php.net/security/crypt_blowfish.php
- This implementation of BCRYPT was originally created by http://www.openwall.com/phpass/
- 
+This hashing method is known in PHP as CRYPT_BLOWFISH.<br />
+More infos : http://www.php.net/security/crypt_blowfish.php<br />
+This implementation of BCRYPT was originally created by http://www.openwall.com/phpass/
+
 ### Generate random bytes
  
  A random() function is available to generate secure random bytes with 5 methods :
@@ -29,20 +29,18 @@ There is also a method to encrypt/decrypt data using a symectric encryption stri
 
 ## Requirements and installation
 
-* PHP version >= 5.3.x
-* Download and copy the [CwsDump](https://github.com/crazy-max/CwsDump) and [CwsDebug](https://github.com/crazy-max/CwsDebug) PHP classes.
+* PHP version >= 5.3
+* Download [CwsDump](https://github.com/crazy-max/CwsDump) and [CwsDebug](https://github.com/crazy-max/CwsDebug).
 * Copy the ``class.cws.crypto.php`` file in a folder on your server.
 * You can use the ``index.php`` file sample to help you.
 
 ## Getting started
 
-See ``index.php``.
+See ``example.php`` file sample to help you.
 
 ## Example
 
-An example is available in ``index.php`` file :
-
-![](http://static.crazyws.fr/resources/blog/2013/08/cwscrypto-pbkdf2-bcrypt.png)
+![](https://raw.github.com/crazy-max/CwsCrypto/master/example.png)
 
 ## Methods
 
@@ -52,10 +50,9 @@ An example is available in ``index.php`` file :
 **decrypt** - Return the decrypted string generated from the encrypt method.<br />
 **random** - Generate secure random bytes with 5 methods : mcrypt_create_iv, openssl_random_pseudo_bytes, GetRandom() from CAPICOM Microsoft class, /dev/urandom on Unix systems or mt_rand() and getmypid() functions.<br />
 
-**setDebugVerbose** - Set the debug verbose. (see CwsDebug class)<br />
-**setDebugMode** - Set the debug mode. (see CwsDebug class)<br />
-**setDefaultMode** - Set the default mode for hashing/check password.<br />
-**setDefaultKey** - Set the default key for encrypt/decrypt method.<br />
+**setPbkdf2Mode** - Set the pbkdf2 mode for hashing/check password.<br />
+**setBcryptMode** - Set the bcrypt mode for hashing/check password. (default)<br />
+**setEncryptionKey** - Set the encryption key for encrypt/decrypt method (max length 56).<br />
 **getError** - Get the last error.<br />
 
 ## License
