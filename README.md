@@ -1,6 +1,6 @@
 # CwsCrypto
 
-CwsCrypto is a PHP class for password hashing with two different encryption methods.
+PHP class for password hashing with two different encryption methods.
 
 ### The PBKDF2 key derivation function
 
@@ -32,7 +32,6 @@ There is also a method to encrypt/decrypt data using a symectric encryption stri
 * PHP version >= 5.3
 * Download [CwsDump](https://github.com/crazy-max/CwsDump) and [CwsDebug](https://github.com/crazy-max/CwsDebug).
 * Copy the ``class.cws.crypto.php`` file in a folder on your server.
-* You can use the ``index.php`` file sample to help you.
 
 ## Getting started
 

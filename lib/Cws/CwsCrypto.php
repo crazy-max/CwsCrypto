@@ -3,37 +3,14 @@
 /**
  * CwsCrypto
  *
- * CwsCrypto is a PHP class for password hashing with two different encryption methods :
- * - The PBKDF2 key derivation function (length 191).
- * - The OpenBSD-style Blowfish-based bcrypt (length 60).
- * A random() function is available to generate secure random bytes.
- * There is also a method to encrypt/decrypt data using a symectric encryption string with
- * the blowfish algorithm and an encryption key in CFB mode but please be advised that you
- * should not use this method for truly sensitive data.
- *
- * CwsCrypto is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your option)
- * or (at your option) any later version.
- *
- * CwsCrypto is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
- * for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- * 
- * Related post: http://goo.gl/GtwtCz
- * 
  * @package CwsCrypto
  * @author Cr@zy
- * @copyright 2013-2015, Cr@zy
+ * @copyright 2013-2016, Cr@zy
  * @license GNU LESSER GENERAL PUBLIC LICENSE
- * @version 1.5
  * @link https://github.com/crazy-max/CwsCrypto
- *
  */
+
+namespace Cws;
 
 class CwsCrypto
 {
@@ -91,7 +68,8 @@ class CwsCrypto
      */
     private $cwsDebug;
     
-    public function __construct(CwsDebug $cwsDebug) {
+    public function __construct(CwsDebug $cwsDebug)
+    {
         $this->cwsDebug = $cwsDebug;
         $this->mode = self::MODE_BCRYPT;
     }
@@ -320,7 +298,7 @@ class CwsCrypto
         }
         
         $this->cwsDebug->labelValue('Encryption key', $this->encryptionKey);
-        $this->cwsDebug->dump('Encrypted data', $data);
+        $this->cwsDebug->dump('Encrypted data', strval($data));
         
         $result = null;
         $td = mcrypt_module_open(MCRYPT_BLOWFISH, '', MCRYPT_MODE_CFB, '');
@@ -349,7 +327,7 @@ class CwsCrypto
      * @param boolean $base64 : Encodes random bytes with MIME base64
      * @return string|NULL : The random bytes
      */
-    public static function random($length = 32, $base64 = true)
+    public function random($length = 32, $base64 = true)
     {
         // Try with mcrypt_create_iv function
         if (function_exists('mcrypt_create_iv') && self::isPHPVersionHigher('5.3.7')) {
@@ -466,7 +444,7 @@ class CwsCrypto
      * @param boolean $raw_output : If true, the key is returned in raw binary format. Hex encoded otherwise.
      * @return string|NULL : A $key_length-byte key derived from the password and salt.
      */
-    private static function getPbkdf2($algorithm, $password, $salt, $ite, $key_length, $raw_output = false)
+    private function getPbkdf2($algorithm, $password, $salt, $ite, $key_length, $raw_output = false)
     {
         $algorithm = strtolower(self::decode($algorithm));
         if (!in_array($algorithm, hash_algos(), true)) {
@@ -503,32 +481,13 @@ class CwsCrypto
     }
     
     /**
-     * Validate a key relative to maximum supported keysize of the opened mode.
-     * @param string $key : The key to validate
-     * @param int $size : The size of the key (check with mcrypt_enc_get_key_size)
-     * @return string $key : The validated key
-     */
-    private static function validateKey($key, $size)
-    {
-        $length = strlen($key);
-        
-        if ($length < $size) {
-            $key = str_pad($key, $size, $key);
-        } elseif ($length > $size) {
-            $key = substr($key, 0, $size);
-        }
-        
-        return $key;
-    }
-    
-    /**
      * Encode data inside a random string.
      * @param string $data : the data to encode
      * @return string : the encoded data
      */
-    private static function encode($data)
+    private function encode($data)
     {
-        $rdm = self::random();
+        $rdm = $this->random();
         $data = base64_encode($data);
         $startIndex = rand(1, strlen($rdm));
         $params = base64_encode($startIndex) . self::ENC_SEPARATOR;
@@ -541,7 +500,7 @@ class CwsCrypto
      * @param string $encData : the encoded data
      * @return string : The decoded data
      */
-    private static function decode($encData)
+    private function decode($encData)
     {
         $params = explode(self::ENC_SEPARATOR, $encData);
         if (count($params) < self::ENC_SECTIONS) {
@@ -557,6 +516,25 @@ class CwsCrypto
         
         $data = $params[self::ENC_DATA_INDEX];
         return base64_decode(substr($data, $startIndex, $dataLength));
+    }
+
+    /**
+     * Validate a key relative to maximum supported keysize of the opened mode.
+     * @param string $key : The key to validate
+     * @param int $size : The size of the key (check with mcrypt_enc_get_key_size)
+     * @return string $key : The validated key
+     */
+    private static function validateKey($key, $size)
+    {
+        $length = strlen($key);
+
+        if ($length < $size) {
+            $key = str_pad($key, $size, $key);
+        } elseif ($length > $size) {
+            $key = substr($key, 0, $size);
+        }
+
+        return $key;
     }
     
     /**
@@ -633,7 +611,7 @@ class CwsCrypto
     
     /**
      * The last error.
-     * @return the $error
+     * @return string $error
      */
     public function getError() {
         return $this->error;

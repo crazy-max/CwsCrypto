@@ -1,0 +1,24 @@
+{
+  "name": "crazy-max/cws-crypto",
+  "type":  "library",
+  "description": "PHP class for password hashing with two different encryption methods.",
+  "keywords": ["crypto", "password", "pbkdf2", "bcrypt", "blowfish"],
+  "homepage": "https://github.com/crazy-max/CwsCrypto",
+  "license": "LGPL",
+  "authors": [
+     {
+        "name": "crazy-max",
+        "homepage": "http://www.crazyws.fr/"
+     }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.3.0",
+    "crazy-max/cws-debug": ">=1.9"
+  },
+  "autoload": {
+    "psr-0": {
+      "Cws": "lib/"
+    }
+  }
+}
