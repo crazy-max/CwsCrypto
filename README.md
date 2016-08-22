@@ -1,6 +1,13 @@
+[![Latest Stable Version](https://img.shields.io/packagist/v/crazy-max/cws-crypto.svg?style=flat-square)](https://packagist.org/packages/crazy-max/cws-crypto)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.3.0-8892BF.svg?style=flat-square)](https://php.net/)
+[![Build Status](https://img.shields.io/travis/crazy-max/CwsCrypto/master.svg?style=flat-square)](https://travis-ci.org/crazy-max/CwsCrypto)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/crazy-max/CwsCrypto.svg?style=flat-square)](https://scrutinizer-ci.com/g/crazy-max/CwsCrypto)
+
 # CwsCrypto
 
 PHP class for password hashing with two different encryption methods.
+
+## Overview
 
 ### The PBKDF2 key derivation function
 
@@ -27,15 +34,26 @@ This implementation of BCRYPT was originally created by http://www.openwall.com/
 
 There is also a method to encrypt/decrypt data using a symectric encryption string with the blowfish algorithm and an encryption key in CFB mode but please be advised that you should not use this method for truly sensitive data. 
 
-## Requirements and installation
+## Requirements
 
-* PHP version >= 5.3
-* Download [CwsDump](https://github.com/crazy-max/CwsDump) and [CwsDebug](https://github.com/crazy-max/CwsDebug).
-* Copy the ``class.cws.crypto.php`` file in a folder on your server.
+* PHP >= 5.3.0
+* CwsDebug >= 1.9
+
+## Installation with Composer
+
+```bash
+composer require crazy-max/cws-crypto
+```
+
+And download the code:
+
+```bash
+composer install # or update
+```
 
 ## Getting started
 
-See ``example.php`` file sample to help you.
+See `tests/test.php` file sample to help you.
 
 ## Example
 
