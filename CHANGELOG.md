@@ -1,33 +1,35 @@
 # Changelog
 
-## 1.5 (2016/08/22)
+## 1.6 (2016/08/22)
 
 * Add composer.json
 * Add travis and scrutinizer
 * Add CHANGELOG.md
 * Review file structure
 * Small refactoring
-* setFormat visibility to private
 
-## 1.4 (2015/06/14)
+## 1.5 (2015/06/14)
 
 * Refactoring
-* Improve vars visibility
+
+## 1.4 (2013/12/14)
+
+* Verbose bug
+* Line delimiters to Unix
 
 ## 1.3 (2013/10/04)
 
+* Get last error method
 * Implement CwsDebug
-* Refactor code
-* Add License
 
-## 1.2 (2013/05/20)
+## 1.2 (2013/09/28)
 
-* Verbose quiet by default
+* Use mt_rand() instead of microtime()
 
-## 1.1 (2013/05/06)
+## 1.1 (2013/09/15)
 
-* Add related post
+* Adding setDefaultMode and setDefaultKey
 
-## 1.0 (2013/05/06)
+## 1.0 (2013/09/01)
 
 * Initial version
