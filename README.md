@@ -1,7 +1,8 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/crazy-max/cws-crypto.svg?style=flat-square)](https://packagist.org/packages/crazy-max/cws-crypto)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.3.0-8892BF.svg?style=flat-square)](https://php.net/)
 [![Build Status](https://img.shields.io/travis/crazy-max/CwsCrypto/master.svg?style=flat-square)](https://travis-ci.org/crazy-max/CwsCrypto)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/crazy-max/CwsCrypto.svg?style=flat-square)](https://scrutinizer-ci.com/g/crazy-max/CwsCrypto)
+[![Code Quality](https://img.shields.io/codacy/grade/1ca10af9d98e4002aee165a0b17b0627.svg?style=flat-square)](https://www.codacy.com/app/crazy-max/CwsCrypto)
+[![StyleCI](https://styleci.io/repos/12510031/shield?style=flat-square)](https://styleci.io/repos/12510031)
 [![Gemnasium](https://img.shields.io/gemnasium/crazy-max/CwsCrypto.svg?style=flat-square)](https://gemnasium.com/github.com/crazy-max/CwsCrypto)
 
 # CwsCrypto
