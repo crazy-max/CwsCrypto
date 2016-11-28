@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7 (2016/11/28)
+
+* Update dependencies
+* Add StyleCI config
+
 ## 1.6 (2016/08/22)
 
 * Add composer.json
