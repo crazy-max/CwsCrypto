@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8 (2018/01/04)
+
+* Switch to MIT LICENSE
+
 ## 1.7 (2016/11/28)
 
 * Update dependencies
