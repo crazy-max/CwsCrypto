@@ -17,8 +17,6 @@ class CwsCrypto
 
     const MODE_PBKDF2 = 0;
     const MODE_BCRYPT = 1;
-    const MODE_ARGON2 = 2;
-    const MODE_SCRYPT = 3;
 
     const PBKDF2_LENGTH = 191;
     const PBKDF2_ALGORITHM = 'sha256';
@@ -92,15 +90,10 @@ class CwsCrypto
             return $this->hashModeBcrypt($password);
         } elseif ($this->mode == self::MODE_PBKDF2) {
             return $this->hashModePbkdf2($password);
-        } elseif ($this->mode == self::MODE_ARGON2) {
-            return $this->hashModeArgon2($password);
-        } elseif ($this->mode == self::MODE_SCRYPT) {
-            return $this->hashModeScrypt($password);
         }
 
         $this->error = 'You have to set the mode...';
         $this->cwsDebug->error($this->error);
-        return null;
     }
 
     /**
@@ -121,12 +114,7 @@ class CwsCrypto
         $salt = $this->getBlowfishSalt($ite);
         $this->cwsDebug->labelValue('Salt', $salt);
 
-        if (function_exists('password_hash')) {
-            $hash = password_hash($password, PASSWORD_BCRYPT, ['salt' => $salt]);
-        } else {
-            $hash = crypt($password, $salt);
-        }
-
+        $hash = crypt($password, $salt);
         $this->cwsDebug->labelValue('Hash', $hash);
         $this->cwsDebug->labelValue('Length', strlen($hash));
 
@@ -136,7 +124,6 @@ class CwsCrypto
 
         $this->error = 'Cannot generate the BCRYPT password hash...';
         $this->cwsDebug->error($this->error);
-        return null;
     }
 
     /**
@@ -178,38 +165,6 @@ class CwsCrypto
 
         $this->error = 'Cannot generate the PBKDF2 password hash...';
         $this->cwsDebug->error($this->error);
-        return null;
-    }
-
-    /**
-     * Create a password hash using Argon2 mode (via libsodium).
-     *
-     * @param string $password
-     *
-     * @return string|null
-     */
-    private function hashModeArgon2($password)
-    {
-        $this->cwsDebug->titleH2('Create password hash using Argon2');
-        $this->cwsDebug->labelValue('Password', $password);
-
-        if (!class_exists('Sodium\\crypto_pwhash_str')) {
-            $this->error = 'Class crypto_pwhash_str_verify not found. Please check that libsodium is installed.';
-            $this->cwsDebug->error($this->error);
-            return null;
-        }
-
-        try {
-            return \Sodium\crypto_pwhash_str(
-                $password,
-                \Sodium\CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
-                \Sodium\CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE
-            );
-        } catch (Exception $ex) {
-            $this->error = 'Cannot generate the Argon2 password hash : ' . $ex->getMessage();
-            $this->cwsDebug->error($this->error);
-            return null;
-        }
     }
 
     /**
@@ -226,10 +181,6 @@ class CwsCrypto
             return $this->checkModeBcrypt($password, $hash);
         } elseif ($this->mode == self::MODE_PBKDF2) {
             return $this->checkModePbkdf2($password, $hash);
-        } elseif ($this->mode == self::MODE_ARGON2) {
-            return $this->checkModeArgon2($password, $hash);
-        } elseif ($this->mode == self::MODE_SCRYPT) {
-            return $this->checkModeScrypt($password, $hash);
         }
 
         $this->error = 'You have to set the mode...';
@@ -252,14 +203,10 @@ class CwsCrypto
         $this->cwsDebug->labelValue('Password', $password);
         $this->cwsDebug->labelValue('Hash', $hash);
 
-        if (function_exists('password_verify')) {
-            $result = password_verify($password, $hash);
-        } else {
-            $checkHash = crypt($password, $hash);
-            $result = $this->slowEquals($hash, $checkHash);
-            $this->cwsDebug->labelValue('Check hash', $checkHash);
-        }
+        $checkHash = crypt($password, $hash);
+        $this->cwsDebug->labelValue('Check hash', $checkHash);
 
+        $result = $this->slowEquals($hash, $checkHash);
         $this->cwsDebug->labelValue('Valid?', ($result ? 'YES!' : 'NO...'));
 
         return $result;
@@ -300,38 +247,6 @@ class CwsCrypto
     }
 
     /**
-     * Check a hash with the password given using Argon2 mode.
-     *
-     * @param string $password
-     * @param string $hash
-     *
-     * @return bool
-     */
-    private function checkModeArgon2($password, $hash)
-    {
-        $this->cwsDebug->titleH2('Check password hash in Argon2 mode');
-        $this->cwsDebug->labelValue('Password', $password);
-        $this->cwsDebug->labelValue('Hash', $hash);
-
-        if (!class_exists('Sodium\\crypto_pwhash_str_verify')) {
-            $this->error = 'Class crypto_pwhash_str_verify not found. Please check that libsodium is installed.';
-            $this->cwsDebug->error($this->error);
-            return false;
-        }
-
-        try {
-            $checkHash = \Sodium\crypto_pwhash_str_verify($hash, $password);
-            $this->cwsDebug->labelValue('Valid?', ($checkHash ? 'YES!' : 'NO...'));
-        } catch (Exception $ex) {
-            $this->error = 'Cannot check password with Argon2 mode : ' . $ex->getMessage();
-            $this->cwsDebug->error($this->error);
-            $checkHash = false;
-        }
-
-        return $checkHash;
-    }
-
-    /**
      * Generate a symectric encryption string with the blowfish algorithm and
      * an encryption key in CFB mode.
      * Please be advised that you should not use this method for truly sensitive data.
@@ -347,13 +262,15 @@ class CwsCrypto
         if (empty($this->encryptionKey)) {
             $this->error = 'You have to set the encryption key...';
             $this->cwsDebug->error($this->error);
-            return null;
+
+            return;
         }
 
         if (empty($data)) {
             $this->error = 'Data empty...';
             $this->cwsDebug->error($this->error);
-            return null;
+
+            return;
         }
 
         $this->cwsDebug->labelValue('Encryption key', $this->encryptionKey);
@@ -390,13 +307,15 @@ class CwsCrypto
         if (empty($this->encryptionKey)) {
             $this->error = 'You have to set the encryption key...';
             $this->cwsDebug->error($this->error);
-            return null;
+
+            return;
         }
 
         if (empty($data)) {
             $this->error = 'Data empty...';
             $this->cwsDebug->error($this->error);
-            return null;
+
+            return;
         }
 
         $this->cwsDebug->labelValue('Encryption key', $this->encryptionKey);
@@ -433,8 +352,6 @@ class CwsCrypto
      */
     public function random($length = 32, $base64 = true)
     {
-        $bytes = null;
-
         // Try with mcrypt_create_iv function
         if (function_exists('mcrypt_create_iv') && self::isPHPVersionHigher('5.3.7')) {
             $bytes = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
@@ -493,7 +410,6 @@ class CwsCrypto
 
         $this->error = 'Unable to generate sufficiently strong random bytes due to a lack of sources with sufficient entropy...';
         $this->cwsDebug->error($this->error);
-        return null;
     }
 
     /**
@@ -561,14 +477,16 @@ class CwsCrypto
         if (!in_array($algorithm, hash_algos(), true)) {
             $this->error = 'Invalid hash algorithm for PBKDF2...';
             $this->cwsDebug->error($this->error);
-            return null;
+
+            return;
         }
 
         $ite = self::decode($ite);
         if (!is_numeric($ite) || $ite <= 0 || $key_length <= 0) {
             $this->error = 'Invalid parameters for PBKDF2...';
             $this->cwsDebug->error($this->error);
-            return null;
+
+            return;
         }
 
         $hash_length = strlen(hash($algorithm, '', true));
@@ -714,22 +632,6 @@ class CwsCrypto
     public function setBcryptMode()
     {
         $this->setMode(self::MODE_BCRYPT);
-    }
-
-    /**
-     * Set the argon2 mode for hashing/check password.
-     */
-    public function setArgon2Mode()
-    {
-        $this->setMode(self::MODE_ARGON2);
-    }
-
-    /**
-     * Set the scrypt mode for hashing/check password.
-     */
-    public function setScryptMode()
-    {
-        $this->setMode(self::MODE_SCRYPT);
     }
 
     /**
