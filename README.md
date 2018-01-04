@@ -4,8 +4,9 @@
 [![Code Quality](https://img.shields.io/codacy/grade/1ca10af9d98e4002aee165a0b17b0627.svg?style=flat-square)](https://www.codacy.com/app/crazy-max/CwsCrypto)
 [![StyleCI](https://styleci.io/repos/12510031/shield?style=flat-square)](https://styleci.io/repos/12510031)
 [![Gemnasium](https://img.shields.io/gemnasium/crazy-max/CwsCrypto.svg?style=flat-square)](https://gemnasium.com/github.com/crazy-max/CwsCrypto)
+[![Donate Paypal](https://img.shields.io/badge/donate-paypal-7057ff.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WP57J5QVY8Y38)
 
-# CwsCrypto
+## About
 
 PHP class for password hashing with two different encryption methods.
 
@@ -36,12 +37,7 @@ This implementation of BCRYPT was originally created by http://www.openwall.com/
 
 There is also a method to encrypt/decrypt data using a symectric encryption string with the blowfish algorithm and an encryption key in CFB mode but please be advised that you should not use this method for truly sensitive data. 
 
-## Requirements
-
-* PHP >= 5.3.0
-* CwsDebug >= 1.9
-
-## Installation with Composer
+## Installation
 
 ```bash
 composer require crazy-max/cws-crypto
@@ -59,7 +55,7 @@ See `tests/test.php` file sample to help you.
 
 ## Example
 
-![](https://raw.github.com/crazy-max/CwsCrypto/master/example.png)
+![](.res/example.png)
 
 ## Methods
 
@@ -74,10 +70,14 @@ See `tests/test.php` file sample to help you.
 **setEncryptionKey** - Set the encryption key for encrypt/decrypt method (max length 56).<br />
 **getError** - Get the last error.<br />
 
+## How can i help ?
+
+We welcome all kinds of contributions :raised_hands:!<br />
+The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon:<br />
+Any funds donated will be used to help further development on this project! :gift_heart:
+
+[![Donate Paypal](.res/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WP57J5QVY8Y38)
+
 ## License
 
-LGPL. See ``LICENSE`` for more details.
-
-## More infos
-
-http://www.crazyws.fr/dev/classes-php/cwscrypto-creer-et-verifier-un-hash-avec-algorithme-bcrypt-ou-pbkdf2-ZFFIT.html
+MIT. See `LICENSE` for more details.
