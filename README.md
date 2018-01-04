@@ -8,7 +8,7 @@
 
 ## About
 
-PHP class for password hashing with two different encryption methods.
+PHP class for password hashing with multi encryption methods.
 
 ## Overview
 
