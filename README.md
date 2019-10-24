@@ -2,8 +2,14 @@
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.3.0-8892BF.svg?style=flat-square)](https://php.net/)
 [![Build Status](https://img.shields.io/travis/com/crazy-max/CwsCrypto/master.svg?style=flat-square)](https://travis-ci.com/crazy-max/CwsCrypto)
 [![Code Quality](https://img.shields.io/codacy/grade/1ca10af9d98e4002aee165a0b17b0627.svg?style=flat-square)](https://www.codacy.com/app/crazy-max/CwsCrypto)
-[![Support me on Patreon](https://img.shields.io/badge/donate-patreon-fb664e.svg?style=flat-square)](https://www.patreon.com/crazymax)
-[![Donate Paypal](https://img.shields.io/badge/donate-paypal-7057ff.svg?style=flat-square)](https://www.paypal.me/crazyws)
+[![Support me on Patreon](https://img.shields.io/badge/donate-patreon-f96854.svg?logo=patreon&style=flat-square)](https://www.patreon.com/crazymax)
+[![Donate Paypal](https://img.shields.io/badge/donate-paypal-00457c.svg?logo=paypal&style=flat-square)](https://www.paypal.me/crazyws)
+
+## :warning: Abandoned project
+
+This project is not maintained anymore and is abandoned. Feel free to fork and make your own changes if needed.
+
+Thanks to everyone for their valuable feedback and contributions.
 
 ## About
 
